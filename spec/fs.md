@@ -8,7 +8,7 @@ Block 2: Metadata block, 4096B per file
 Rest: Data
 Last: Backup of block 0
 ### Superblock structure
-offset 0 - size 8 - magic - u64 0x58444154 ;XDAT
+offset 0 - size 8 - magic - u64 0x58444154 ;XDAT\n
 offset 8 - size 4 - version - u32
 offset 12 - size 8 - blktot - u64
 offset 20 - size 8 - metastart - u64
