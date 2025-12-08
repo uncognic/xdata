@@ -1,6 +1,6 @@
 use std::fs::File;
 use std::io::{Write, Seek, SeekFrom};
-
+use uuid::Uuid;
 fn mkfs(filename: &str) {
     let mut file = File::create(filename).expect("failed to create img");
 
@@ -9,7 +9,7 @@ fn mkfs(filename: &str) {
     let blktot: u64 = 1;
     let metastart: u64 = 1;
     let metact: u64 = 0;
-    let uuid: [u8; 16] = [0u8; 16];
+    let uuid: [u8; 16] = *Uuid::new_v4().as_bytes();
     let sha512: [u8; 64] = [0u8; 64];
 
     let mut buf = [0u8; 4096];
@@ -27,8 +27,9 @@ fn mkfs(filename: &str) {
 fn main() {
     let args: Vec<String> = std::env::args().collect();
     if args.len() != 2 {
+        println!("using default disk.img");
         mkfs("disk.img");
-        std::process::exit(1);
+        std::process::exit(0);
     }
     mkfs(&args[1]);
 }
