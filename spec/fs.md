@@ -14,7 +14,9 @@ offset 12 - size 8 - blktot - u64\
 offset 20 - size 8 - metastart - u64\
 offset 28 - size 8 - metact - u64\
 offset 36 - size 16 - uuid - u8[16]\
-offset 52 - size 64 - sha512 - u8[64]\
+offset 52 - size 64 - sha512 - u8[64]
+### Bitmap structure
+Bitmap is at block 1. Bits 0, 1, and 2 are always set to 01. (Superblock, Bitmap block and Metadata block)
 ### Metadata block structure
 
 
