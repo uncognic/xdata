@@ -10,9 +10,9 @@
         let version: u32 = 1;
         let blktot: u64 = 8;
         let metastart: u64 = 2;
-        let metact: u64 = 0;
+        let metacount: u64 = 1;
         let uuid: [u8; 16] = *Uuid::new_v4().as_bytes();
-        let sha512: [u8; 64] = [0u8; 64];
+        let mhash: u64 = 0;
         let bmpstart: u64 = 1;
         const SUPERBLOCK: u64 = 0;
 
@@ -21,9 +21,10 @@
         buf[8..12].copy_from_slice(&version.to_le_bytes());
         buf[12..20].copy_from_slice(&blktot.to_le_bytes());
         buf[20..28].copy_from_slice(&metastart.to_le_bytes());
-        buf[28..36].copy_from_slice(&metact.to_le_bytes());
+        buf[28..36].copy_from_slice(&metacount.to_le_bytes());
         buf[36..52].copy_from_slice(&uuid);
-        buf[52..116].copy_from_slice(&sha512);
+        buf[52..60].copy_from_slice(&mhash.to_le_bytes());
+        buf[60..68].copy_from_slice(&bmpstart.to_le_bytes());
 
         file.seek(SeekFrom::Start(SUPERBLOCK)).unwrap();
         file.write_all(&buf).unwrap();
