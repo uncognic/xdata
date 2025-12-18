@@ -1,5 +1,6 @@
     use std::fs::File;
     use uuid::Uuid;
+    use metrohash::MetroHash64;
     use std::io::{Write, Seek, SeekFrom, Read};
     const BLOCK_SIZE: u64 = 4096;
     pub fn mkfs(filename: &str)
@@ -72,4 +73,18 @@
         }
         None
 
+    }
+    pub struct FileStruct {
+        pub name: String,
+        pub size: usize,
+        pub blkoffset: usize,
+        pub blkend: usize,
+        pub createtime: i64,
+        pub modifytime: i64,
+        pub readtime: i64
+    }
+    pub struct DirStruct {
+        pub name: String,
+        pub offset: usize,
+        pub entries: Vec<FileStruct>
     }
