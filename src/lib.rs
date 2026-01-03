@@ -98,6 +98,7 @@ pub fn free_bitmap(file: &mut File, total_blocks: usize, bitmap_start: u64, blk:
     None
 
 }
+#[derive(Debug)] 
 pub struct FileStruct {
     pub name: String,
     pub size: usize,
@@ -107,6 +108,7 @@ pub struct FileStruct {
     pub modifytime: i64,
     pub readtime: i64
 }
+#[derive(Debug)]
 pub struct DirStruct {
     pub name: String,
     pub offset: usize,

@@ -1,7 +1,10 @@
 use std::env;
 use std::fs::{File, OpenOptions};
 use std::io::{Read, Seek, SeekFrom, Write};
-use xdata::{alloc_bitmap, free_bitmap};
+use std::hash::Hasher;
+use std::time::{SystemTime, UNIX_EPOCH};
+use metrohash::MetroHash64;
+use xdata::{alloc_bitmap, free_bitmap, FileStruct};
 
 const BLOCK_SIZE: u64 = 4096;
 
@@ -36,6 +39,8 @@ fn main() {
     src.read_to_end(&mut data).expect("failed to read source file");
 
     let blocks_needed = ((data.len() as u64 + BLOCK_SIZE - 1) / BLOCK_SIZE) as usize;
+    let mut hasher = MetroHash64::new();
+
     let mut allocated_blocks = Vec::new();
 
     for i in 0..blocks_needed {
@@ -51,6 +56,7 @@ fn main() {
                 if start < end {
                     block[..(end - start)].copy_from_slice(&data[start..end]);
                 }
+                hasher.write(&block);
                 disk.write_all(&block).unwrap();
             }
             None => {
@@ -62,5 +68,25 @@ fn main() {
             }
         }
     }
+
+    if blocks_needed == 0 {
+        hasher.write(&[]);
+    }
+
+    let data_hash = hasher.finish();
+
+    let now = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_secs() as i64;
+    let file_struct = FileStruct {
+        name: std::path::Path::new(&args[2]).file_name().and_then(|s| s.to_str()).unwrap_or(&args[2]).to_string(),
+        size: data.len(),
+        blkoffset: *allocated_blocks.first().unwrap_or(&0),
+        blkend: *allocated_blocks.last().unwrap_or(&0),
+        createtime: now,
+        modifytime: now,
+        readtime: now,
+    };
+
     println!("wrote {} bytes in {} blocks: {:?}", data.len(), blocks_needed, allocated_blocks);
+    println!("file metadata: {:?}", file_struct);
+    println!("metrohash64: {:016x}", data_hash);
 }

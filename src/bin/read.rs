@@ -1,6 +1,10 @@
 use std::env;
 use std::fs::File;
 use std::io::{Read, Seek, SeekFrom, Write};
+use std::hash::Hasher;
+
+use metrohash::MetroHash64;
+
 const BLOCK_SIZE: u64 = 4096;
 
 fn main() {
@@ -20,4 +24,9 @@ fn main() {
     disk.seek(SeekFrom::Start(block_number * BLOCK_SIZE)).unwrap();
     disk.read_exact(&mut buffer).expect("failed to read block");
     out.write_all(&buffer).expect("failed to write to output file");
+
+    let mut hasher = MetroHash64::new();
+    hasher.write(&buffer);
+    let block_hash = hasher.finish();
+    println!("read block {} -> metrohash64: {:016x}", block_number, block_hash);
 }
