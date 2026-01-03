@@ -1,5 +1,4 @@
 use xdata::mkfs;
-
 fn main() {
     let name: Vec<String> = std::env::args().collect();
     if name.len() != 2 {
